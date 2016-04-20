@@ -1,28 +1,29 @@
 # BotEngine
-Only a function you need to make a bot!
+Only a function you need to make a Facebook Messenger bot!
 
-Supported platforms: Facebook Messenger
+```go
+/**
+ *  A simple hotel booking bot.
+ */
 
-At first BotEngine supports `python`, while it will support various languages such as `ruby`, `php`, `node.js`, `Java`, `Go`.
+func onThink(ctx botengine.Context, msg botengine.Message, act botengine.Action, user botengine.User) botengine.ThinkResponse {
+	if ctx.State == botengine.InitialState && strings.Contains(msg.Text, "hotel") {
+	    // Search for hotels and prepare `carouselElements` ...
+	
+	    return botengine.Carousel("search_for_hotel", carouselElements)
+	} else if ctx.State == "search_for_hotel" {
+	    ctx.PutValue("hotel_id", act.Attributes["hotel_id"])
+	    
+	    return botengine.Confirm("confirm_book", "Are you sure to book this hotel?")
+	} else if ctx.State == "confirm_book" {
+	    
+	    if act.Kind == botengine.ConfirmYesActionKind {
+	        return botengine.Text(botengine.InitialState, "Thank you. We booked your hotel!")
+	    } else {
+	        return botengine.Text(botengine.InitialState, "I'm glad to see you again!")
+	    }
+	}
 
-```python
-def on_message_received(context, message, action):
-    if context.state == u"initial"
-        return BotResponse.elements_and_state(recommended_places, u"search_place")
-        
-    elif context.state == u"search_place" and action == u"book(place:2)"
-        context.set_meta_data(u"place_to_book", 2)
-        
-        return BotResponse.text_and_state(u"Are you sure to book the place 2?", u"confirm_booking")
-        
-    elif context.state == u"confirm_booking"
-        place = context.get_meta_data(u"place_to_book")
-        context.set_meta_data(u"place_booked", place)
-        
-        return BotResponse.text_and_state(u"You booked place " + place + u".", u"booked")
-        
-    elif context.state == u"booked"
-        place = context.get_meta_data(u"place_booked")
-    
-        return BotResponse.text_and_state(u"Forget where you booked? You booked place " + place u"!")
+	return botengine.Text(botengine.InitialState, "Not supported operation.")
+}
 ```
